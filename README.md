@@ -1,6 +1,6 @@
 # litequad
 
-## All credits go to [macroquad] / not-fl3
+## Credits: [macroquad] / not-fl3
 
 [macroquad]: https://github.com/not-fl3/macroquad
 

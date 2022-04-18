@@ -109,7 +109,6 @@ impl FontInternal {
         self.characters.insert((character, size), character_info);
     }
 
-
     pub(crate) fn measure_text(
         &mut self,
         text: &str,
@@ -205,6 +204,7 @@ pub struct TextParams {
     /// and Y axis would be scaled by font_scale
     /// Default is 1.0
     pub font_scale_aspect: f32,
+    pub rotation: f32,
     pub color: Color,
 }
 
@@ -215,6 +215,7 @@ impl Default for TextParams {
             font_size: 20,
             font_scale: 1.0,
             font_scale_aspect: 1.0,
+            rotation: 0.0,
             color: WHITE,
         }
     }
@@ -245,6 +246,21 @@ pub fn load_ttf_font_from_bytes(bytes: &[u8]) -> Result<Font, FontError> {
     font.populate_font_cache(&Font::ascii_character_list(), 15);
 
     Ok(font)
+}
+
+pub fn draw_text_rot(text: &str, x: f32, y: f32, font_size: f32, color: Color, rotation: f32) {
+    draw_text_ex(
+        text,
+        x,
+        y,
+        TextParams {
+            font_size: font_size as u16,
+            font_scale: 1.0,
+            color,
+            rotation,
+            ..Default::default()
+        },
+    )
 }
 
 /// Draw text with given font_size
@@ -308,6 +324,7 @@ pub fn draw_text_ex(text: &str, x: f32, y: f32, params: TextParams) {
             crate::texture::DrawTextureParams {
                 dest_size: Some(vec2(dest.w, dest.h)),
                 source: Some(source),
+                rotation: params.rotation,
                 ..Default::default()
             },
         );
