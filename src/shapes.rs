@@ -121,6 +121,33 @@ pub fn draw_poly(x: f32, y: f32, sides: u8, radius: f32, rotation: f32, color: C
     context.gl.geometry(&vertices, &indices);
 }
 
+
+pub fn draw_poly_angle(x: f32, y: f32, sides: u8, radius: f32, angle: f32, color: Color) {
+    let context = get_context();
+
+    let mut vertices = Vec::<Vertex>::with_capacity(sides as usize + 2);
+    let mut indices = Vec::<u16>::with_capacity(sides as usize * 3);
+
+    let angle = angle.to_radians();
+    vertices.push(Vertex::new(x, y, 0., 0., 0., color));
+    for i in 0..sides + 1 {
+        let rx = (i as f32 / sides as f32 * angle).cos();
+        let ry = (i as f32 / sides as f32 * angle).sin();
+
+        let vertex = Vertex::new(x + radius * rx, y + radius * ry, 0., rx, ry, color);
+
+        vertices.push(vertex);
+
+        if i != sides {
+            indices.extend_from_slice(&[0, i as u16 + 1, i as u16 + 2]);
+        }
+    }
+
+    context.gl.texture(None);
+    context.gl.draw_mode(DrawMode::Triangles);
+    context.gl.geometry(&vertices, &indices);
+}
+
 /// Draws a regular polygon outline centered at `[x, y]` with a given number of `sides`, `radius`,
 /// clockwise `rotation` (in degrees), line `thickness`, and `color`.
 pub fn draw_poly_lines(
